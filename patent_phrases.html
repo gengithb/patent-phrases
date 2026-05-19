@@ -22,10 +22,10 @@
     --danger: #c0392b;
     --radius: 8px;
     --shadow: 0 1px 3px rgba(0,0,0,0.08);
-    --meisai-accent: #2a5c8a;
-    --meisai-light: #e8f0f8;
-    --client-accent: #6b3fa0;
-    --client-light: #f0eaf8;
+    --meisai-accent: #1a4060;
+    --meisai-light: #c4dff5;
+    --client-accent: #3a6010;
+    --client-light: #d8f5b0;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -106,12 +106,12 @@
     width: 100%;
     border-radius: var(--radius);
     border: none;
-    background: var(--meisai-accent);
+    background: #1a4060;
     color: #fff;
     cursor: pointer;
     transition: background 0.15s;
   }
-  .lock-btn:hover { background: #1e4a73; }
+  .lock-btn:hover { background: #0e2a40; }
 
   .lock-error {
     font-size: 12px;
@@ -207,10 +207,10 @@
     gap: 5px;
   }
   .btn:hover { background: var(--surface2); border-color: #bbb; }
-  .btn-primary-meisai { background: var(--meisai-accent); color: #fff; border-color: var(--meisai-accent); }
-  .btn-primary-meisai:hover { background: #1e4a73; border-color: #1e4a73; }
-  .btn-primary-client { background: var(--client-accent); color: #fff; border-color: var(--client-accent); }
-  .btn-primary-client:hover { background: #542e80; border-color: #542e80; }
+  .btn-primary-meisai { background: #c4dff5; color: #1a4060; border-color: #a8ccec; }
+  .btn-primary-meisai:hover { background: #a8ccec; border-color: #8ab8e0; }
+  .btn-primary-client { background: #d8f5b0; color: #3a6010; border-color: #bce890; }
+  .btn-primary-client:hover { background: #bce890; border-color: #a0d870; }
   .btn-danger { color: var(--danger); border-color: #e8c0bc; }
   .btn-danger:hover { background: #fdf0ef; }
   .btn-sm { font-size: 12px; padding: 4px 10px; }
@@ -447,7 +447,7 @@
 
 <script>
 // ===== パスワード設定（ここを変更してください）=====
-const PASSWORD = '1234';
+const PASSWORD = 'phrases2024';
 // ===================================================
 
 const SESSION_KEY = 'phrases_auth';
