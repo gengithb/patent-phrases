@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>定型フレーズ集</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✏️</text></svg>">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
+
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #f0efe9;
+    --border: #dddbd3;
+    --accent: #2a5c8a;
+    --accent-light: #e8f0f8;
+    --text: #1a1a1a;
+    --text-muted: #6b6860;
+    --success: #2d7a4f;
+    --success-bg: #eaf5ee;
+    --danger: #c0392b;
+    --radius: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08);
+    --meisai-accent: #2a5c8a;
+    --meisai-light: #e8f0f8;
+    --client-accent: #6b3fa0;
+    --client-light: #f0eaf8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ===== パスワード画面 ===== */
+  #lockScreen {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+
+  .lock-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px 36px;
+    width: 320px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .lock-icon {
+    font-size: 40px;
+    line-height: 1;
+  }
+
+  .lock-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.04em;
+  }
+
+  .lock-input {
+    font-family: inherit;
+    font-size: 20px;
+    letter-spacing: 0.3em;
+    text-align: center;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    width: 100%;
+    outline: none;
+    color: var(--text);
+    background: var(--surface);
+    transition: border-color 0.15s;
+  }
+  .lock-input:focus { border-color: var(--meisai-accent); }
+  .lock-input.error { border-color: var(--danger); animation: shake 0.3s; }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  .lock-btn {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 0;
+    width: 100%;
+    border-radius: var(--radius);
+    border: none;
+    background: var(--meisai-accent);
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .lock-btn:hover { background: #1e4a73; }
+
+  .lock-error {
+    font-size: 12px;
+    color: var(--danger);
+    min-height: 16px;
+  }
+
+  /* ===== メインアプリ（デフォルト非表示） ===== */
+  #app { display: none; }
+  #app.unlocked { display: block; }
+
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    gap: 12px;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  header h1 {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  .mode-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 3px;
+  }
+
+  .mode-tab {
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 13px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+  }
+  .mode-tab:hover { background: var(--surface); color: var(--text); }
+  .mode-tab.active[data-mode="meisai"] {
+    background: var(--surface);
+    color: var(--meisai-accent);
+    box-shadow: 0 1px 4px rgba(42,92,138,0.18);
+  }
+  .mode-tab.active[data-mode="client"] {
+    background: var(--surface);
+    color: var(--client-accent);
+    box-shadow: 0 1px 4px rgba(107,63,160,0.18);
+  }
+  .mode-tab .tab-icon { font-size: 14px; }
+
+  .header-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+  .btn {
+    font-family: inherit;
+    font-size: 13px;
+    padding: 6px 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .btn:hover { background: var(--surface2); border-color: #bbb; }
+  .btn-primary-meisai { background: var(--meisai-accent); color: #fff; border-color: var(--meisai-accent); }
+  .btn-primary-meisai:hover { background: #1e4a73; border-color: #1e4a73; }
+  .btn-primary-client { background: var(--client-accent); color: #fff; border-color: var(--client-accent); }
+  .btn-primary-client:hover { background: #542e80; border-color: #542e80; }
+  .btn-danger { color: var(--danger); border-color: #e8c0bc; }
+  .btn-danger:hover { background: #fdf0ef; }
+  .btn-sm { font-size: 12px; padding: 4px 10px; }
+
+  main { max-width: 820px; margin: 0 auto; padding: 24px 16px; }
+
+  .category-block { margin-bottom: 28px; }
+
+  .category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--cat-accent, var(--meisai-accent));
+  }
+
+  .category-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--cat-accent, var(--meisai-accent));
+    text-transform: uppercase;
+  }
+
+  .phrase-list { display: flex; flex-direction: column; gap: 6px; }
+
+  .phrase-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    box-shadow: var(--shadow);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    cursor: pointer;
+    position: relative;
+  }
+  .phrase-card:hover {
+    border-color: var(--cat-accent, var(--meisai-accent));
+    box-shadow: 0 2px 8px rgba(42,92,138,0.12);
+  }
+  .phrase-card.copied { border-color: var(--success); background: var(--success-bg); }
+
+  .phrase-text {
+    flex: 1;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text);
+    word-break: break-all;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .phrase-actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .phrase-card:hover .phrase-actions { opacity: 1; }
+
+  .copy-badge {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    background: var(--success);
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    display: none;
+    font-weight: 500;
+  }
+  .phrase-card.copied .copy-badge { display: block; }
+  .phrase-card.copied .phrase-actions { opacity: 0; }
+
+  .add-form {
+    background: var(--surface2);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    margin-top: 6px;
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .add-form.open { display: flex; }
+
+  .add-form textarea {
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.7;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    resize: vertical;
+    min-height: 72px;
+    width: 100%;
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+  }
+  .add-form textarea:focus { border-color: var(--cat-accent, var(--meisai-accent)); }
+  .add-form-actions { display: flex; gap: 6px; justify-content: flex-end; }
+
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 24px;
+    width: 520px;
+    max-width: 95vw;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  }
+  .modal h2 { font-size: 15px; font-weight: 700; margin-bottom: 14px; }
+
+  .modal textarea, .modal input[type="text"] {
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.7;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    width: 100%;
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+    margin-bottom: 14px;
+  }
+  .modal textarea { resize: vertical; min-height: 100px; }
+  .modal textarea:focus, .modal input[type="text"]:focus { border-color: var(--accent); }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(12px);
+    background: #1a1a1a;
+    color: #fff;
+    font-size: 13px;
+    padding: 8px 18px;
+    border-radius: 20px;
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+    pointer-events: none;
+    z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .empty-hint {
+    color: var(--text-muted);
+    font-size: 12px;
+    padding: 10px 0 4px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<!-- パスワード画面 -->
+<div id="lockScreen">
+  <div class="lock-box">
+    <div class="lock-icon">🔒</div>
+    <div class="lock-title">定型フレーズ集</div>
+    <input class="lock-input" type="password" id="pwInput" placeholder="••••" maxlength="20"
+      onkeydown="if(event.key==='Enter')checkPw()">
+    <div class="lock-error" id="pwError"></div>
+    <button class="lock-btn" onclick="checkPw()">ログイン</button>
+  </div>
+</div>
+
+<!-- メインアプリ -->
+<div id="app">
+  <header>
+    <div class="header-left">
+      <h1>📋 定型フレーズ集</h1>
+      <div class="mode-tabs">
+        <button class="mode-tab active" data-mode="meisai" onclick="switchMode('meisai')">
+          <span class="tab-icon">📄</span> 明細書フレーズ
+        </button>
+        <button class="mode-tab" data-mode="client" onclick="switchMode('client')">
+          <span class="tab-icon">✉️</span> クライアント連絡
+        </button>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-sm btn-primary-meisai" id="addCatBtn" onclick="openAddCat()">＋ カテゴリ追加</button>
+    </div>
+  </header>
+
+  <main id="main"></main>
+
+  <div class="modal-overlay" id="editModal">
+    <div class="modal">
+      <h2>フレーズを編集</h2>
+      <textarea id="editText" rows="5"></textarea>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeEdit()">キャンセル</button>
+        <button class="btn btn-primary-meisai" id="editSaveBtn" onclick="saveEdit()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="catModal">
+    <div class="modal">
+      <h2 id="catModalTitle">カテゴリを追加</h2>
+      <input type="text" id="catNameInput" placeholder="カテゴリ名を入力…">
+      <div class="modal-actions">
+        <button class="btn" onclick="closeCatModal()">キャンセル</button>
+        <button class="btn btn-primary-meisai" id="catModalSaveBtn" onclick="saveCat()">追加</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== パスワード設定（ここを変更してください）=====
+const PASSWORD = 'phrases2024';
+// ===================================================
+
+const SESSION_KEY = 'phrases_auth';
+
+function checkPw() {
+  const input = document.getElementById('pwInput').value;
+  if (input === PASSWORD) {
+    sessionStorage.setItem(SESSION_KEY, '1');
+    document.getElementById('lockScreen').style.display = 'none';
+    document.getElementById('app').classList.add('unlocked');
+    render();
+  } else {
+    const inp = document.getElementById('pwInput');
+    document.getElementById('pwError').textContent = 'パスワードが違います';
+    inp.classList.add('error');
+    inp.value = '';
+    setTimeout(() => inp.classList.remove('error'), 400);
+  }
+}
+
+// セッション中は再入力不要
+if (sessionStorage.getItem(SESSION_KEY) === '1') {
+  document.getElementById('lockScreen').style.display = 'none';
+  document.getElementById('app').classList.add('unlocked');
+}
+
+// ===== フレーズ集本体 =====
+const DEFAULT_DATA = {
+  meisai: {
+    categories: [
+      {
+        id: 'jisshi',
+        name: '実施の形態の書き出し',
+        phrases: [
+          '以下の説明では、図面を参照して所定の構成要素を説明する場合にはその構成要素の符号を示して説明をするが、図面を参照する必要がない場合には符号を省略して説明をすることがある。',
+          '同一の構造部が複数ある場合には、図示の都合上、一部の構造部に対してのみ符号を付して説明を行う。',
+          '図中のＸ軸、Ｙ軸及びＺ軸は互いに直交し、本明細書では、Ｘ方向、Ｙ方向及びＺ方向といった表現も使用する。',
+          '以下の説明では、図中の対象物の向きに合わせて上、下、左、右などの方向を示す語句が使用されるが、これらの語句は本発明を限定する意図で使用されるものではない。',
+          '各図は、●●●の具体的な実施形態として用意された三次元ＣＡＤデータに基づいた図面であり、図面に表わされた部材の形状、構造、位置、範囲、及び／又は比率は本発明の開示内容を構成する。'
+        ]
+      },
+      {
+        id: 'seigyo',
+        name: '制御部／制御装置',
+        phrases: [
+          '制御装置は、例えばＣＰＵ（Central Processing Unit）等のプロセッサと、メモリとを有する。',
+          '制御装置は、プログラムを実行することにより、～機能と、～機能と、～機能とを実行する。',
+          '図●において、各ブロックはハードウェア（装置）単位の構成ではなく、機能単位の構成を示している。各ブロックは単一の装置内に実装されてもよいし、複数の装置内に別れて実装されてもよい。'
+        ]
+      }
+    ]
+  },
+  client: {
+    categories: [
+      {
+        id: 'aisatsu',
+        name: 'あいさつ・書き出し',
+        phrases: [
+          'お世話になっております。●●特許事務所の●●でございます。',
+          'ご確認のほど、どうぞよろしくお願い申し上げます。',
+          '先日はお時間をいただきありがとうございました。'
+        ]
+      },
+      {
+        id: 'shorui',
+        name: '書類・手続き関連',
+        phrases: [
+          '拒絶理由通知書が届きましたので、ご報告申し上げます。内容をご確認の上、対応方針につきましてご指示いただけますでしょうか。',
+          '出願番号●●につきまして、審査官より以下の拒絶理由が通知されました。',
+          '期限は●●年●月●日となっております。ご回答いただける期日をお知らせください。'
+        ]
+      }
+    ]
+  }
+};
+
+const STORAGE_KEY = 'patent_phrases_v2';
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed.categories && !parsed.meisai) {
+        return { meisai: { categories: parsed.categories }, client: DEFAULT_DATA.client };
+      }
+      return parsed;
+    }
+    const oldRaw = localStorage.getItem('patent_phrases');
+    if (oldRaw) {
+      const old = JSON.parse(oldRaw);
+      if (old.categories) {
+        return { meisai: { categories: old.categories }, client: DEFAULT_DATA.client };
+      }
+    }
+    return DEFAULT_DATA;
+  } catch { return DEFAULT_DATA; }
+}
+
+function save(d) { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
+
+let data = load();
+let currentMode = 'meisai';
+let editCi = null, editPi = null;
+let catModalMode = 'add';
+let renameCi = null;
+
+const MODE_CONFIG = {
+  meisai: { accent: 'var(--meisai-accent)', accentClass: 'meisai', btnClass: 'btn-primary-meisai' },
+  client: { accent: 'var(--client-accent)', accentClass: 'client', btnClass: 'btn-primary-client' }
+};
+
+function switchMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.mode === mode);
+  });
+  const addCatBtn = document.getElementById('addCatBtn');
+  if (addCatBtn) addCatBtn.className = `btn btn-sm ${MODE_CONFIG[mode].btnClass}`;
+  render();
+}
+
+function getCurrentCategories() { return data[currentMode].categories; }
+
+function render() {
+  const main = document.getElementById('main');
+  if (!main) return;
+  main.innerHTML = '';
+  const cfg = MODE_CONFIG[currentMode];
+
+  getCurrentCategories().forEach((cat, ci) => {
+    const block = document.createElement('div');
+    block.className = 'category-block';
+    block.style.setProperty('--cat-accent', cfg.accent);
+
+    block.innerHTML = `
+      <div class="category-header">
+        <span class="category-title">${escHtml(cat.name)}</span>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-sm" onclick="openRenameCat(${ci})">✎ 名前変更</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteCat(${ci})">✕ 削除</button>
+          <button class="btn btn-sm ${cfg.btnClass}" onclick="toggleAddForm(${ci})">＋ フレーズ追加</button>
+        </div>
+      </div>
+      <div class="phrase-list" id="list-${ci}"></div>
+      <div class="add-form" id="addForm-${ci}">
+        <textarea id="addText-${ci}" placeholder="フレーズを入力…"></textarea>
+        <div class="add-form-actions">
+          <button class="btn btn-sm" onclick="toggleAddForm(${ci})">キャンセル</button>
+          <button class="btn btn-sm ${cfg.btnClass}" onclick="addPhrase(${ci})">追加</button>
+        </div>
+      </div>
+    `;
+    main.appendChild(block);
+
+    const list = block.querySelector(`#list-${ci}`);
+    if (cat.phrases.length === 0) {
+      list.innerHTML = '<p class="empty-hint">フレーズがありません。「＋ フレーズ追加」から登録してください。</p>';
+    }
+    cat.phrases.forEach((phrase, pi) => {
+      const card = document.createElement('div');
+      card.className = 'phrase-card';
+      card.id = `card-${ci}-${pi}`;
+      card.style.setProperty('--cat-accent', cfg.accent);
+      card.onclick = (e) => { if (e.target.closest('.phrase-actions')) return; copyPhrase(phrase, ci, pi); };
+      card.innerHTML = `
+        <span class="phrase-text">${escHtml(phrase)}</span>
+        <div class="phrase-actions">
+          <button class="btn btn-sm" onclick="openEdit(${ci},${pi})">✎</button>
+          <button class="btn btn-sm btn-danger" onclick="deletePhrase(${ci},${pi})">✕</button>
+        </div>
+        <span class="copy-badge">コピー済み</span>
+      `;
+      list.appendChild(card);
+    });
+  });
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function copyPhrase(text, ci, pi) {
+  navigator.clipboard.writeText(text).then(() => {
+    const card = document.getElementById(`card-${ci}-${pi}`);
+    card.classList.add('copied');
+    setTimeout(() => card.classList.remove('copied'), 1600);
+  }).catch(() => showToast('コピーに失敗しました'));
+}
+
+function toggleAddForm(ci) {
+  const form = document.getElementById(`addForm-${ci}`);
+  const isOpen = form.classList.contains('open');
+  form.classList.toggle('open', !isOpen);
+  if (!isOpen) document.getElementById(`addText-${ci}`).focus();
+  else document.getElementById(`addText-${ci}`).value = '';
+}
+
+function addPhrase(ci) {
+  const ta = document.getElementById(`addText-${ci}`);
+  const val = ta.value.trim();
+  if (!val) return;
+  data[currentMode].categories[ci].phrases.push(val);
+  save(data); render();
+  showToast('フレーズを追加しました');
+}
+
+function openAddCat() {
+  catModalMode = 'add';
+  document.getElementById('catModalTitle').textContent = 'カテゴリを追加';
+  const saveBtn = document.getElementById('catModalSaveBtn');
+  saveBtn.className = `btn ${MODE_CONFIG[currentMode].btnClass}`;
+  saveBtn.textContent = '追加';
+  document.getElementById('catNameInput').value = '';
+  document.getElementById('catModal').classList.add('open');
+  document.getElementById('catNameInput').focus();
+}
+
+function openRenameCat(ci) {
+  catModalMode = 'rename';
+  renameCi = ci;
+  document.getElementById('catModalTitle').textContent = 'カテゴリ名を変更';
+  const saveBtn = document.getElementById('catModalSaveBtn');
+  saveBtn.className = `btn ${MODE_CONFIG[currentMode].btnClass}`;
+  saveBtn.textContent = '保存';
+  document.getElementById('catNameInput').value = data[currentMode].categories[ci].name;
+  document.getElementById('catModal').classList.add('open');
+  document.getElementById('catNameInput').focus();
+}
+
+function closeCatModal() { document.getElementById('catModal').classList.remove('open'); }
+
+function saveCat() {
+  const name = document.getElementById('catNameInput').value.trim();
+  if (!name) return;
+  if (catModalMode === 'add') {
+    data[currentMode].categories.push({ id: 'cat_' + Date.now(), name, phrases: [] });
+    showToast('カテゴリを追加しました');
+  } else {
+    data[currentMode].categories[renameCi].name = name;
+    showToast('カテゴリ名を変更しました');
+  }
+  save(data); render(); closeCatModal();
+}
+
+function deleteCat(ci) {
+  const name = data[currentMode].categories[ci].name;
+  const count = data[currentMode].categories[ci].phrases.length;
+  const msg = count > 0
+    ? `「${name}」を削除します。\nフレーズ ${count} 件も削除されます。よろしいですか？`
+    : `「${name}」を削除しますか？`;
+  if (!confirm(msg)) return;
+  data[currentMode].categories.splice(ci, 1);
+  save(data); render();
+  showToast('カテゴリを削除しました');
+}
+
+function openEdit(ci, pi) {
+  editCi = ci; editPi = pi;
+  document.getElementById('editText').value = data[currentMode].categories[ci].phrases[pi];
+  document.getElementById('editSaveBtn').className = `btn ${MODE_CONFIG[currentMode].btnClass}`;
+  document.getElementById('editModal').classList.add('open');
+  document.getElementById('editText').focus();
+}
+function closeEdit() { document.getElementById('editModal').classList.remove('open'); }
+function saveEdit() {
+  const val = document.getElementById('editText').value.trim();
+  if (!val) return;
+  data[currentMode].categories[editCi].phrases[editPi] = val;
+  save(data); render(); closeEdit();
+  showToast('フレーズを更新しました');
+}
+
+function deletePhrase(ci, pi) {
+  if (!confirm('このフレーズを削除しますか？')) return;
+  data[currentMode].categories[ci].phrases.splice(pi, 1);
+  save(data); render();
+  showToast('フレーズを削除しました');
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+document.getElementById('editModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeEdit(); });
+document.getElementById('catModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeCatModal(); });
+document.getElementById('catNameInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') saveCat(); });
+
+// ロック解除済みなら即レンダリング
+if (sessionStorage.getItem(SESSION_KEY) === '1') render();
+</script>
+</body>
+</html>
